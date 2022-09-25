@@ -1,0 +1,57 @@
+buildscript{
+    //ext: 전역변수 설정
+    ext {
+        springBootVersion = '2.1.7.RELEASE'
+        //스프링부트 gradle plugin의 2.1.7릴리즈 의존성으로 받겠디
+    }
+    repositories{ //각종 의존성(라이브러리)를 어떤 원격 저장소에서 받을지 정함
+        mavenCentral() //예전부터 많이 사용해온 저장소. but 라이브러리 업로드가 복잡하다는 단점
+        jcenter() //라이브러리 업로드 간단화라는 장점. jcenter에다 업로드하면 mavenCentral에도 업로드되게 자동화할수있음
+    }
+    dependencies{ //프로젝트 개발에 필요한 의존성들 선언하는곳
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+    }
+}
+plugins {
+    id 'java'
+    id 'war'
+}
+//플러그인 의존성 적용할지 결정. 아래 네개는 자바와 스프링부트를 사용하기 위해 필수로 추가해야하는 플러그인
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'io.spring.dependency-management' //스프링 부트의 의존성들을 관리해주는 플러그인이므로 꼭 추가해야함
+
+group 'com.example'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+ext {
+    junitVersion = '5.8.2'
+}
+
+sourceCompatibility = '1.8'
+targetCompatibility = '1.8'
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
+dependencies {
+//    compile('org.springframework.boot:spring-boot-starter-web')
+//    이거가 자꾸에러남 .. 아직 해결 못함 ㅜㅜ
+//    testCompile('org.springframework.boot:spring-boot-starter-web')
+    compileOnly('javax.enterprise:cdi-api:2.0.SP1')
+    compileOnly('javax.ws.rs:javax.ws.rs-api:2.1.1')
+    compileOnly('javax.servlet:javax.servlet-api:4.0.1')
+
+    testImplementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")
+}
+
+test {
+    useJUnitPlatform()
+}
